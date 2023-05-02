@@ -1,0 +1,53 @@
+Facts:
+● The stock price of AAPL on 2023-04-12 was 135.42.
+● The stock price of MSFT on 2023-04-12 was 270.71.
+● The stock price of GOOG on 2023-04-12 was 2854.08.
+● The market trend on 2023-04-12 was bullish.
+● The market trend on 2023-03-31 was bearish.
+● AAPL is in the technology sector.
+● MSFT is in the technology sector.
+● JPM is in the finance sector.
+● WMT is in the retail sector.
+● The revenue of AAPL is 365.7 billion.
+● The revenue of MSFT is 185.4 billion.
+● The revenue of JPM is 131.4 billion.
+● The revenue of WMT is 559.2 billion.
+● On 2023-04-10, an insider in JPM bought shares.
+● On 2023-04-11, an insider in AAPL sold shares.
+● AAPL will pay a dividend of 0.22 per share on 2023-05-01.
+● MSFT will pay a dividend of 0.36 per share on 2023-05-15.
+● GOOG will pay a dividend of 1.25 per share on 2023-05-15.
+● AAPL will split its stock 2-for-1 on 2023-06-01.
+● MSFT will split its stock 3-for-1 on 2023-06-15.
+
+
+Prolog Code:
+% Define the facts and rules for the domain knowledge
+stock_price(aapl, date(2023, 4, 12), 135.42).
+stock_price(msft, date(2023, 4, 12), 270.71).
+stock_price(goog, date(2023, 4, 12), 2854.08).
+% Define the initial facts and rules to be used as a starting point for inference
+stock_price(aapl, date(2023, 1, 1), 100.00). % assuming starting price
+market_trend(bullish, date(2023, 1, 1)). % assuming starting trend
+% Define the inference rules
+% If the market is bullish, then the stock price of AAPL will increase by 10%.
+% If the market is bearish, then the stock price of AAPL will decrease by 5%.
+infer_price(Ticker, date(Year,_,_), NewPrice) :-
+stock_price(Ticker, date(Year,_,_), OldPrice),
+market_trend(bullish, date(Year,_,_)),
+NewPrice is OldPrice * 1.10.
+infer_price(Ticker, date(Year,_,_), NewPrice) :-
+stock_price(Ticker, date(Year,_,_), OldPrice),
+market_trend(bearish, date(Year,_,_)),
+NewPrice is OldPrice * 0.95.
+% Implement the forward chaining algorithm
+forward_chain :-
+repeat,
+(infer_price(aapl, date(2023,_,_), NewPrice),
+assert(stock_price(aapl, date(2023,_,_), NewPrice)),
+write('New stock price for AAPL: '), write(NewPrice), nl,
+fail;
+true),
+!.
+% Define a query to find the stock price of AAPL in the year 2023
+?- forward_chain, stock_price(aapl, date(2023,_,_), Price).
